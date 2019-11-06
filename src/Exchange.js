@@ -1,13 +1,23 @@
 import React, { useEffect, useReducer, useCallback } from 'react'
 import styled from 'styled-components'
 import Card from './Card'
-import service from './ExcahngeService'
+import getSingleton from './ExchangeService'
 import SelectCard from './SelectCard'
 import { format } from './utils'
 
-function reducer(state, action) {
+const service = getSingleton()
+
+export function reducer(state, action) {
     switch (action.type) {
         case 'RATIO':
+            if (state.fromValue !== '') {
+                const fromValue = parseFloat(String(state.fromValue).replace(/ /, ''))
+                return {
+                    ...state,
+                    ratio: action.payload,
+                    toValue: format(fromValue / action.payload)
+                };
+            }
             return { ...state, ratio: action.payload };
         case 'FROM': {
             const toValue = parseFloat(String(state.toValue).replace(/ /, ''))
@@ -22,7 +32,6 @@ function reducer(state, action) {
         case 'TO': {
             const fromValue = parseFloat(String(state.fromValue).replace(/ /, ''))
             const ratio = service.ratio(state.from, action.payload);
-
             return {
                 ...state,
                 ratio,
@@ -94,7 +103,7 @@ export default function Exchange() {
     const [state, dispatch] = useReducer(reducer, {
         from: 'EUR',
         to: 'USD',
-        ratio: 0,
+        ratio: service.ratio('EUR', 'USD'),
         value: 0,
         fromValue: '',
         toValue: ''

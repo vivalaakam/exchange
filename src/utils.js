@@ -7,6 +7,8 @@ export function format(num) {
         return ''
     }
 
+    main = String(main)
+
     if (/\./.test(String(num))) {
         cents = cents || ''
 

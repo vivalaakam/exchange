@@ -1,25 +1,20 @@
 import { EventEmitter } from 'fbemitter'
 
-class ExchangeService extends EventEmitter {
-    static defaults = new ExchangeService(['EUR', 'USD', 'GBP'])
-
+export class ExchangeService extends EventEmitter {
     constructor(currencies) {
         super()
         this._base = 'EUR'
         this._symbols = currencies.filter(c => c !== this._base)
 
         this.resp = { "base": "EUR", "rates": { "GBP": 1, "USD": 1 } }
-
-        this.subscribe()
-        this.fetchAndUpdateData()
     }
 
     subscribe() {
-        // this.interval = setInterval(this.fetchAndUpdateData, 10000)
+        this.interval = setInterval(this.fetchAndUpdateData, 10000)
     }
 
     unsubscribe() {
-        // clearInterval(this.interval)
+        clearInterval(this.interval)
     }
 
     fetchAndUpdateData = () => {
@@ -48,4 +43,18 @@ class ExchangeService extends EventEmitter {
     }
 }
 
-export default ExchangeService.defaults
+export default function getSingleton() {
+    if (!ExchangeService._singleton) {
+        ExchangeService._singleton = new ExchangeService(['EUR', 'USD', 'GBP'])
+
+        ExchangeService._singleton.fetchAndUpdateData().then(() => {
+            ExchangeService._singleton.subscribe()
+        })
+
+        //     ExchangeService._singleton.resp = { "base": "EUR", "rates": { "GBP": 3, "USD": 2 } }
+
+        //     ExchangeService._singleton.emit('updated', ExchangeService._singleton.resp)
+    }
+
+    return ExchangeService._singleton
+}

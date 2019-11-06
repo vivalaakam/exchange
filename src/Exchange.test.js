@@ -77,6 +77,18 @@ test('reducer TO_VALUE = 15', () => {
     });
 })
 
+test('reducer TOGGLE ', () => {
+    expect(reducer(defaultState, {
+        type: 'TOGGLE'
+    })).toEqual({
+        from: 'USD',
+        to: 'EUR',
+        ratio: 1.1109,
+        fromValue: '11.11',
+        toValue: '10'
+    });
+})
+
 test('reducer ERROR', () => {
     try {
         reducer(defaultState, {

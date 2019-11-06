@@ -57,6 +57,18 @@ export function reducer(state, action) {
                 fromValue: format(payload * state.ratio)
             }
         }
+
+        case 'TOGGLE': {
+            return {
+                ...state,
+                to: state.from,
+                from: state.to,
+                toValue: state.fromValue,
+                fromValue: state.toValue,
+                ratio: service.ratio(state.to, state.from)
+            }
+        }
+
         default:
             throw new Error();
     }
@@ -141,6 +153,10 @@ export default function Exchange() {
         dispatch({ type: 'TO', payload: currency })
     })
 
+    const onToggle = useCallback(() => {
+        dispatch({ type: 'TOGGLE' })
+    })
+
     const getValueFrom = (currency) => {
         if (state.toValue === '') {
             return ''
@@ -175,7 +191,7 @@ export default function Exchange() {
                         sign="-"
                     />
                 </SelectCard>
-                <Separator>
+                <Separator onClick={onToggle}>
                     <Triangle />
                 </Separator>
                 <SelectCard

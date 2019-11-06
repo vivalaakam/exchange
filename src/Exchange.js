@@ -3,28 +3,7 @@ import styled from 'styled-components'
 import Card from './Card'
 import service from './ExcahngeService'
 import SelectCard from './SelectCard'
-
-function format(num) {
-    let [main, cents] = String(num).split('.')
-
-    main = Math.abs(main)
-
-    if (Number.isNaN(main)) {
-        return ''
-    }
-
-    if (/\./.test(String(num))) {
-        cents = cents || ''
-
-        if (cents.length > 2) {
-            cents = cents.substr(0, 2)
-        }
-
-        return `${main}.${cents}`
-    }
-
-    return main
-}
+import { format } from './utils'
 
 function reducer(state, action) {
     switch (action.type) {
@@ -107,6 +86,10 @@ const Triangle = styled.div`
     }
 `;
 
+const Ratio = styled.div`
+    padding: 5px;
+`;
+
 export default function Exchange() {
     const [state, dispatch] = useReducer(reducer, {
         from: 'EUR',
@@ -149,17 +132,56 @@ export default function Exchange() {
         dispatch({ type: 'TO', payload: currency })
     })
 
+    const getValueFrom = (currency) => {
+        if (state.toValue === '') {
+            return ''
+        }
+        const ratio = service.ratio(currency, state.to)
+
+        return `-${format(state.toValue * ratio)}`
+    }
+
+    const getValueTo = (currency) => {
+        if (state.fromValue === '') {
+            return ''
+        }
+        const ratio = service.ratio(state.from, currency)
+
+        return `+${format(state.fromValue / ratio)}`
+    }
+
     return (
-        <Wrapper>
-            <SelectCard currencies={['EUR', 'USD', 'GBP']} onChange={onChangeFrom}>
-                <Card currency={state.from} onChange={from} value={state.fromValue} sign="-" />
-            </SelectCard>
-            <Separator>
-                <Triangle />
-            </Separator>
-            <SelectCard currencies={['EUR', 'USD', 'GBP']} onChange={onChangeTo}>
-                <Card currency={state.to} onChange={to} value={state.toValue} sign="+" />
-            </SelectCard>
-        </Wrapper>
+        <>
+            <Ratio>Current ratio {state.from} -> {state.to}: {state.ratio.toFixed(5)}</Ratio>
+            <Wrapper>
+                <SelectCard
+                    currencies={['EUR', 'USD', 'GBP']}
+                    onChange={onChangeFrom}
+                    getValueFor={getValueFrom}
+                >
+                    <Card
+                        currency={state.from}
+                        onChange={from}
+                        value={state.fromValue}
+                        sign="-"
+                    />
+                </SelectCard>
+                <Separator>
+                    <Triangle />
+                </Separator>
+                <SelectCard
+                    currencies={['EUR', 'USD', 'GBP']}
+                    onChange={onChangeTo}
+                    getValueFor={getValueTo}
+                >
+                    <Card
+                        currency={state.to}
+                        onChange={to}
+                        value={state.toValue}
+                        sign="+"
+                    />
+                </SelectCard>
+            </Wrapper>
+        </>
     )
 }

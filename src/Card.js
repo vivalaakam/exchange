@@ -39,6 +39,7 @@ const InputBack = styled.input`
     text-align: right;
     color: #fff;
     width: 100%;
+    border-bottom: 1px dashed transparent;
     &:focus {
         outline: none;
     }
@@ -59,10 +60,10 @@ const WrapInput = styled.div`
     position: relative;
 `;
 
-
 const stop = (e) => {
     e.stopPropagation();
 }
+
 export default function Card({ currency, value, onChange, sign }) {
     return (
         <Wrapper>

@@ -8,7 +8,7 @@ const UL = styled.ul`
     padding: 0px;
 `;
 
-export default function SelectCard({ currencies, children, onChange }) {
+export default function SelectCard({ currencies, children, onChange, getValueFor }) {
     const [active, setActive] = useState(false)
 
     const onClick = useCallback(() => {
@@ -32,7 +32,13 @@ export default function SelectCard({ currencies, children, onChange }) {
         <div onClick={onClick}>
             {children}
             <UL>
-                {currencies.map(c => (<SelectCardValue key={c} value={c} onClick={onChangeLocal} />))}
+                {currencies.map(currency => (
+                    <SelectCardValue
+                        key={currency}
+                        currency={currency}
+                        onClick={onChangeLocal}
+                        getValueFor={getValueFor}
+                    />))}
             </UL>
         </div>
     )

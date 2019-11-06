@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import Exchange from './Echange';
+import Exchange from './Exchange';
 
 const Wrapper = styled.div`
     max-width: 800px;

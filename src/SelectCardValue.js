@@ -8,20 +8,22 @@ const LI = styled.li`
     background-color: gray;
     border-radius: 5px;
     color: #fff;
+    display: flex;
+    justify-content: space-between;
     &:hover {
         cursor: pointer;
         color: rgba(255,255,255,.8);
     }
 `;
 
-export default function SelectCardValue({ value, onClick }) {
+export default function SelectCardValue({ currency, onClick, getValueFor }) {
     const onClickLocal = useCallback(() => {
-        onClick(value)
-    })
+        onClick(currency)
+    }, [])
 
     return (
         <LI onClick={onClickLocal}>
-            {value}
+            <span>{currency}</span> <span>{getValueFor(currency)}</span>
         </LI>
     )
 }

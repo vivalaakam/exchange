@@ -22,18 +22,20 @@ class ExchangeService extends EventEmitter {
         // clearInterval(this.interval)
     }
 
-
     fetchAndUpdateData = () => {
         return fetch(`https://api.ratesapi.io/api/latest?base=${this._base}&symbols=${this._symbols.join(',')}`)
             .then((resp) => resp.json())
             .then((data) => {
                 this.resp = data
-                console.log(this.resp)
                 this.emit('updated', this.resp)
             })
     }
 
     ratio(from, to) {
+        if (from === to) {
+            return 1
+        }
+
         if (from === this._base) {
             return 1 / this.resp.rates[to]
         }
